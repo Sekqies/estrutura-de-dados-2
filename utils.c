@@ -7,7 +7,7 @@ void swap (int* a,int *b){
 }
 
 int min (int a, int b){
-    return a>b? a : b;
+    return a > b ? a : b;
 }
 
 int* copy_array (int* array, int size) {
@@ -21,4 +21,11 @@ void print_array (int* array, int size) {
     for (int i = 0; i < size-1; i++)
         printf("%d ", array[i]);
     printf("%d\n", array[size-1]);
+}
+
+bool is_sorted (int* array, int size) {
+    for (int i = 0; i < size; i++)
+        if (array[i-1] > array[i])
+            return false;
+    return true;
 }

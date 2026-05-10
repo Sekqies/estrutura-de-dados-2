@@ -2,59 +2,35 @@
 
 /*---------- Quick Sort ----------*/
 
-// Implement variable pivot
 void quick_sort (int* array, int begin, int end) {
-	if (end - begin <= 1) {
-		if (end >= begin && array[begin] > array[end]) {
-			swap(&array[begin], &array[end]);
-		}
-		return;
+	if (begin < end) {
+		int p = partition(array, begin, end);
+		quick_sort(array, begin, p-1);
+		quick_sort(array, p+1, end);
 	}
-
-	int left = begin, right = end - 1;
-	while (1) {
-		for (; left <= right && array[left] <= array[end]; ++left) {}
-		for (; left <= right && array[right] >= array[end]; --right) {}
-		if (left > right) {
-			swap(&array[end], &array[left]);
-			break;
-		}
-		swap(&array[left], &array[right]);
-	}
-	quick_sort(array, begin, left-1);
-	quick_sort(array, left+1, end);
 }
 
-// Other version, but needs to be debugged
-// void quick_sort (int* array, int begin, int end) {
-// 	if (begin < end) {
-// 		int p = partition(array, begin, end);
-// 		quick_sort(array, begin, p-1);
-// 		quick_sort(array, p+1, end);
-// 	}
-// }
-// 
-// int partition (int* array, int begin, int end) {
-// 	int pivot = array[begin]; // Make it not fixed
-// 	int left = begin+1;
-// 	int right = end;
-// 	do {
-// 		while (left < end && array[left] < pivot) {
-// 			// ++count;
-// 			left++;
-// 		}
-// 		while (begin < right && pivot <= array[right] <= 0) {
-// 			// ++count;
-// 			right--;
-// 		}
-// 		if (left < right) {
-//             swap(&array[left], &array[right]);
-// 		}
-// 	} while (left < right);
-// 	array[begin] = array[right];
-// 	array[right] = pivot;
-// 	return right;
-// }
+int partition (int* array, int begin, int end) {
+	int pivot = array[begin]; // Make it not fixed
+	int left = begin+1;
+	int right = end;
+	do {
+		while (left < end && array[left] < pivot) {
+			// ++count;
+			left++;
+		}
+		while (begin < right && pivot <= array[right]) {
+			// ++count;
+			right--;
+		}
+		if (left < right) {
+            swap(&array[left], &array[right]);
+		}
+	} while (left < right);
+	array[begin] = array[right];
+	array[right] = pivot;
+	return right;
+}
 
 /*---------- Merge Sort ----------*/
 
