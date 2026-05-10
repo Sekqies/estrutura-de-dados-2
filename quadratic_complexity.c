@@ -1,38 +1,33 @@
-void swap(int* a,int *b){
-    int tmp = *a;
-    *a = *b;
-    *b = tmp;
-}
+#include"quadratic_complexity.h"
 
-
-void bubble_sort(int* ar, int n){
-    for(int i = 0; i < n; ++i){
-        for(int j = 1; j < n; ++j){
-            if(ar[j] < ar[j-1]){
-                swap(&ar[j], &ar[j-1]);
+void bubble_sort (int* array, int size) {
+    for (int i = 0; i < size; ++i) {
+        for (int j = 1; j < size; ++j) {
+            if (array[j] < array[j-1]) {
+                swap(&array[j], &array[j-1]);
             } 
         }
     }
 }
 
-void selection_sort(int* ar, int n){
-    for(int i = 0; i < n; ++i){
+void selection_sort (int* array, int size) {
+    for (int i = 0; i < size-1; ++i) {
         int smallest_index = i;
-        for(int j = 0; j < n; ++j){
-            if(ar[i] > ar[j]) smallest_index = j;
+        for (int j = i+1; j < size; ++j) {
+            if (array[j] < array[smallest_index]) smallest_index = j;
         }
-        swap(ar[i],ar[j]);
+        swap(&array[i], &array[smallest_index]);
     }
 }
 
-void insert_sort(int* ar, int n){
-    for(int i = 1; i < n; ++i){
+void insertion_sort (int* array, int size) {
+    for (int i = 1; i < size; ++i) {
         int j = i-1;
-        int key = ar[i];
-        while(j >= 0 && ar[j] > key){
-            ar[j+1] = ar[j];
+        int key = array[i];
+        while (j >= 0 && array[j] > key) {
+            array[j+1] = array[j];
             j--;
         }
-        ar[j+1] = key;
+        array[j+1] = key;
     }
 }
