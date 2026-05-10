@@ -4,9 +4,6 @@ void swap(int* a,int *b){
     *b = tmp;
 }
 
-int min(int a, int b){
-    return a>b? a : b;
-}
 
 void bubble_sort(int* ar, int n){
     for(int i = 0; i < n; ++i){
