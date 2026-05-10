@@ -1,3 +1,27 @@
+
+int fast_log2(unsigned int v){
+    int l = 0;
+    int r = 32;
+    while(l < r){
+        const int m = (l+r)/2;
+        if(v & (1<<m)){
+            l = m + 1;
+        }
+        else 
+            r = m;
+    }
+}
+
+int count_bytes(unsigned int v){
+    return (fast_log2(v) >> 3) + 1;
+}
+
+
+// returns the nth byte of an unsigned integer, starting from the lsB
+unsigned char get_nth_byte(unsigned int v, unsigned char n){
+    return (v >> (n<<3)) & 0xFF;
+}
+
 int min(int a, int b){
     return a<b? a : b;
 }
@@ -11,7 +35,8 @@ int abs(int a){
 }
 
 
-// O(n + k), onde k = (max(ar) - min(ar))
+// execução: O(n + k), onde k = (max(ar) - min(ar))
+// memória auxiliar: O(k)
 void count_sort(int* ar, const int n){
     int smallest = ar[0];
     int largest = ar[0];
@@ -41,3 +66,39 @@ void count_sort(int* ar, const int n){
     free(bucket);
 }
 
+int radix_bucket[256];
+
+
+// fazemos radix sort byte a byte já que isso permite que trabalhemos somente com log2 e operações bitwise
+// que são, na prática, O(1)
+
+// execução: O(n)
+// memória auxiliar: O(n)
+void bytewise_radix_sort(int* ar, const int n){
+    int* tmp = calloc(n,sizeof(int));
+    for(unsigned char byte_idx = 0; byte_idx < 4; ++byte_idx){
+        memset(radix_bucket,0,256 * sizeof(int)); 
+
+        int smallest = ar[0];
+        int largest = ar[0];
+        for(int i =0; i < n; ++i){
+            smallest = min(smallest, get_nth_byte(ar[i],byte_idx));
+            largest = max(largest, get_nth_byte(ar[i],byte_idx));
+        }
+
+
+        for(int i = 0; i < n; ++i){
+            unsigned char current_byte = get_nth_byte(ar[i],byte_idx);
+            radix_bucket[current_byte]++;
+        }
+        for(int i = 0; i < 256; ++i){
+            radix_bucket[i] += radix_bucket[i-1];
+        }
+        for(int i = n-1; i >=0; --i){
+            unsigned char current_byte = get_nth_byte(ar[i],byte_idx);
+            tmp[--radix_bucket[current_byte]] = ar[i];
+        }
+        memcpy(ar, tmp, n * sizeof(int));
+    }
+    free(tmp);
+}
