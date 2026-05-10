@@ -76,22 +76,22 @@ int radix_bucket[256];
 // memória auxiliar: O(n)
 void bytewise_radix_sort(int* ar, const int n){
     int* tmp = calloc(n,sizeof(int));
+
+    // radix sort tem o problema que ele não sabe discernir números negativos de positivos.
+    // se tratarmos o bit de sinal como um bit de valor (ex: -3 = (1) 11 = 111 = 5), teremos problema de ordenação, já que todo
+    // número negativo terá o primeiro bit setado, fazendo que ele seja maior que os positivos.
+    // para isso, invertemos o primeiro bit de cada número. dessa forma, um número positivo sempre será maior que um número negativo, e a comparação de magnitude ocorre normalmente.   
+    for(int i = 0; i < n; ++i){
+        ar[i] ^= 0x80000000;
+    }
+
     for(unsigned char byte_idx = 0; byte_idx < 4; ++byte_idx){
         memset(radix_bucket,0,256 * sizeof(int)); 
-
-        int smallest = ar[0];
-        int largest = ar[0];
-        for(int i =0; i < n; ++i){
-            smallest = min(smallest, get_nth_byte(ar[i],byte_idx));
-            largest = max(largest, get_nth_byte(ar[i],byte_idx));
-        }
-
-
         for(int i = 0; i < n; ++i){
             unsigned char current_byte = get_nth_byte(ar[i],byte_idx);
             radix_bucket[current_byte]++;
         }
-        for(int i = 0; i < 256; ++i){
+        for(int i = 1; i < 256; ++i){
             radix_bucket[i] += radix_bucket[i-1];
         }
         for(int i = n-1; i >=0; --i){
@@ -99,6 +99,9 @@ void bytewise_radix_sort(int* ar, const int n){
             tmp[--radix_bucket[current_byte]] = ar[i];
         }
         memcpy(ar, tmp, n * sizeof(int));
+    }
+    for(int i =0; i < n; ++i){
+        ar[i] ^= 0x80000000;
     }
     free(tmp);
 }
