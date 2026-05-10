@@ -1,4 +1,4 @@
-#include"utils.h"
+#include "utils.h"
 
 void bubble_sort (int* array, int size);
 void selection_sort (int* array, int size);

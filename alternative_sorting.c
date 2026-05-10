@@ -18,6 +18,8 @@ int count_bytes(unsigned int v){
 
 
 // returns the nth byte of an unsigned integer, starting from the lsB
+// shifting to the right by 8n will remove the lower 8n (or lower n bytes). 
+// taking the AND with 0xFF will give the value of the first byte.
 unsigned char get_nth_byte(unsigned int v, unsigned char n){
     return (v >> (n<<3)) & 0xFF;
 }

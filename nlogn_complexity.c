@@ -1,4 +1,4 @@
-#include"nlogn_complexity.h"
+#include "nlogn_complexity.h"
 
 /*---------- Quick Sort ----------*/
 
@@ -44,7 +44,7 @@ void merge_sort (int* array, int begin, int end) {
 }
 
 void merge (int* array, int begin, int end) {
-	static int temp_array[10000000]; // Change to a #define const
+	static int temp_array[10000000]; 
 	int middle = (begin+end)/2;
 	int i = begin;
 	int j = begin;
