@@ -2,6 +2,7 @@
 // #include"quadratic_complexity.c"
 #include"nlogn_complexity.h"
 #include"quadratic_complexity.h"
+#include"utils.h"
 #include<time.h>
 
 void test_quadratic_sort(void (*sort)(int*, int), int* array, int size) {
@@ -12,6 +13,10 @@ void test_quadratic_sort(void (*sort)(int*, int), int* array, int size) {
     print_array(array_cp, size);
     float dt = (end - begin) / (float) CLOCKS_PER_SEC;
     printf("Time taken: %.8fs\n", dt);
+    if (!is_sorted(array_cp, size)) {
+        printf("\n\nAs you can see, it is not sorted...\nI'll interrupt it here just to get your attention\n");
+        exit(0);
+    }
     free(array_cp);
 }
 
@@ -23,6 +28,10 @@ void test_nlogn_sort(void (*sort)(int*, int, int), int* array, int size) {
     print_array(array_cp, size);
     float dt = (end - begin) / (float) CLOCKS_PER_SEC;
     printf("Time taken: %.8fs\n", dt);
+    if (!is_sorted(array_cp, size)) {
+        printf("\n\nAs you can see, it is not sorted...\nI'll interrupt it here just to get your attention\n");
+        exit(0);
+    }
     free(array_cp);
 }
 
