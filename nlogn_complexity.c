@@ -1,25 +1,47 @@
 #include "nlogn_complexity.h"
 
-/*---------- Quick Sort ----------*/
+/*--------------- Quick Sort ---------------*/
 
-void quick_sort (int* array, int begin, int end) {
+// Apenas uma função no mesmo padrão de parâmetros das outras
+// para deixar o código mais limpo
+void quick_sort (int* array, int size) {
+	quick_sort_iteration(array, 0, size-1, 0);
+}
+
+// Chamada recursiva do Quick Sort em relação a cada
+// array parcialmente ordenado em relação ao pivô
+void quick_sort_iteration (int* array, int begin, int end, int depth) {
+    // Contadores
+    ctr_recursion_call++;
+    if (depth > ctr_recursion_depth)
+        ctr_recursion_depth = depth;
+    // O sort em si
 	if (begin < end) {
 		int p = partition(array, begin, end);
-		quick_sort(array, begin, p-1);
-		quick_sort(array, p+1, end);
+		quick_sort_iteration(array, begin, p-1, depth+1);
+		quick_sort_iteration(array, p+1, end, depth+1);
 	}
 }
 
+// Divide array em:
+// - Maior que pivô
+// - Menor que pivô
 int partition (int* array, int begin, int end) {
-	int pivot = array[begin]; // Make it not fixed
+    // Escolhe pivô
+    int pivot;
+	assign(&pivot, &array[begin]); // Make it not fixed?
+    // Define cursores
 	int left = begin+1;
 	int right = end;
+    // Move cursores até achar um elemento errado em cada extremidade
+    // Uma vez acha, os troca e procura os pŕoximos até que esteja separado em:
+    // Menores que pivô | pivô | maiores que pivô
 	do {
-		while (left < end && array[left] < pivot) {
+		while (left < end && compare_l(array[left], pivot)) {
 			// ++count;
 			left++;
 		}
-		while (begin < right && pivot <= array[right]) {
+		while (begin < right && compare_le(pivot, array[right])) {
 			// ++count;
 			right--;
 		}
@@ -27,22 +49,38 @@ int partition (int* array, int begin, int end) {
             swap(&array[left], &array[right]);
 		}
 	} while (left < right);
-	array[begin] = array[right];
-	array[right] = pivot;
+    // Reordena últimos valores e retorna posição do pivô
+	assign(&array[begin], &array[right]);
+	assign(&array[right], &pivot);
 	return right;
 }
 
-/*---------- Merge Sort ----------*/
+/*--------------- Merge Sort ---------------*/
 
-void merge_sort (int* array, int begin, int end) {
+// Apenas uma função no mesmo padrão de parâmetros das outras
+// para deixar o código mais limpo
+void merge_sort (int* array, int size) {
+	merge_sort_iteration(array, 0, size-1, 0);
+}
+
+// Divide recursivamente sobre suas metades e as junta depois
+void merge_sort_iteration (int* array, int begin, int end, int depth) {
+    // Contadores
+    ctr_recursion_call++;
+    if (depth > ctr_recursion_depth)
+        ctr_recursion_depth = depth;
+    // O sort em si
 	if (begin < end) {
 		int middle = (begin+end)/2;
-		merge_sort(array, begin, middle);
-		merge_sort(array, middle+1, end);
+		merge_sort_iteration(array, begin, middle, depth+1);
+		merge_sort_iteration(array, middle+1, end, depth+1);
 		merge(array, begin, end);
 	}
 }
 
+// Junta duas metades já ordenadas em um único array ordenado
+// Para tal, requer um array temporário, o qual foi alocado
+// estaticamente para maior eficiência
 void merge (int* array, int begin, int end) {
 	static int temp_array[10000000]; 
 	int middle = (begin+end)/2;
@@ -51,26 +89,25 @@ void merge (int* array, int begin, int end) {
 	int k = middle+1;
 
 	while (j <= middle && k <= end) {
-		if (array[j] <= array[k]) {
-			temp_array[i] = array[j];
+		if (compare_le(array[j], array[k])) {
+			assign(&temp_array[i], &array[j]);
 			j++;
 		} else {
-			temp_array[i] = array[k];
+			assign(&temp_array[i], &array[k]);
 			k++;
 		}
-		// ++count;
 		i++;
 	}
 	while (j <= middle) {
-		temp_array[i] = array[j];
+		assign(&temp_array[i], &array[j]);
 		i++;
 		j++;
 	}
 	while (k <= end) {
-		temp_array[i] = array[k];
+		assign(&temp_array[i], &array[k]);
 		i++;
 		k++;
 	}
 	for (i = begin; i <= end; i++)
-		array[i] = temp_array[i];
+		assign(&array[i], &temp_array[i]);
 }
