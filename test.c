@@ -3,27 +3,6 @@
 #include "nlogn_complexity.h"
 #include "quadratic_complexity.h"
 #include "utils.h"
-#include <time.h>
-
-void test_sort(Sort sort, int* array, int size) {
-    int* array_cp = copy_array(array, size);
-
-    time_t begin = clock();
-    (*sort)(array_cp, size);
-    time_t end = clock();
-
-    float dt = (end - begin) / (float) CLOCKS_PER_SEC;
-    printf("Time taken: %.8fs\n", dt);
-    print_counters();
-    clear_counters();
-
-    if (!is_sorted(array_cp, size)) {
-        print_array(array_cp, size);
-        printf("\n\nAs you can see, it is not sorted...\nI'll interrupt it here just to get your attention\n");
-        exit(0);
-    }
-    free(array_cp);
-}
 
 int main() {
     int size = 28;
