@@ -38,6 +38,7 @@ void deal_with_flags (int argc, char** argv, char** input, int* mode, int* size)
                 break;
             }
             if (*size <= 0) {
+                printf("\nERROR: Invalid array size\n");
                 error = true;
                 break;
             }
@@ -183,8 +184,8 @@ int main (int argc, char** argv) {
 
 
     if (mode == 1) {
-        printf("#Todo\n");
-        exit(0);
+        // printf("#Todo\n");
+        // exit(0);
         benchmark(array, size);
     }
     else {

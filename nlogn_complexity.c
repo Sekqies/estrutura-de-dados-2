@@ -29,7 +29,19 @@ void quick_sort_iteration (int* array, int begin, int end, int depth) {
 int partition (int* array, int begin, int end) {
     // Escolhe pivô
     int pivot;
-	assign(&pivot, &array[begin]); // Make it not fixed?
+    // int index;
+    // switch ((begin+end) % 3){
+    // case 0:
+    //     index = begin;
+    //     break;
+    // case 1:
+    //     index = (begin+end)/2;
+    //     break;
+    // default:
+    //     index = end;
+    //     break;
+    // }
+	assign(&pivot, &array[begin]); // Make it not fixed? Above
     // Define cursores
 	int left = begin+1;
 	int right = end;
@@ -82,7 +94,7 @@ void merge_sort_iteration (int* array, int begin, int end, int depth) {
 // Para tal, requer um array temporário, o qual foi alocado
 // estaticamente para maior eficiência
 void merge (int* array, int begin, int end) {
-	static int temp_array[10000000]; 
+	static int temp_array[10000000]; // Do better... (#define something)
 	int middle = (begin+end)/2;
 	int i = begin;
 	int j = begin;
