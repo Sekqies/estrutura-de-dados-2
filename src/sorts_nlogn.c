@@ -1,11 +1,11 @@
-#include "nlogn_complexity.h"
+#include "headers/sorts_nlogn.h"
 
 /*--------------- Quick Sort ---------------*/
 
 // Apenas uma função no mesmo padrão de parâmetros das outras
 // para deixar o código mais limpo
-void quick_sort (int* array, int size) {
-	quick_sort_iteration(array, 0, size-1, 0);
+void quick_sort (int* array, int n) {
+	quick_sort_iteration(array, 0, n-1, 0);
 }
 
 // Chamada recursiva do Quick Sort em relação a cada
@@ -41,7 +41,7 @@ int partition (int* array, int begin, int end) {
     //     index = end;
     //     break;
     // }
-	assign(&pivot, &array[begin]); // Make it not fixed? Above
+	assign(&pivot, array[begin]); // Make it not fixed? Above
     // Define cursores
 	int left = begin+1;
 	int right = end;
@@ -62,8 +62,8 @@ int partition (int* array, int begin, int end) {
 		}
 	} while (left < right);
     // Reordena últimos valores e retorna posição do pivô
-	assign(&array[begin], &array[right]);
-	assign(&array[right], &pivot);
+	assign(&array[begin], array[right]);
+	assign(&array[right], pivot);
 	return right;
 }
 
@@ -71,8 +71,8 @@ int partition (int* array, int begin, int end) {
 
 // Apenas uma função no mesmo padrão de parâmetros das outras
 // para deixar o código mais limpo
-void merge_sort (int* array, int size) {
-	merge_sort_iteration(array, 0, size-1, 0);
+void merge_sort (int* array, int n) {
+	merge_sort_iteration(array, 0, n-1, 0);
 }
 
 // Divide recursivamente sobre suas metades e as junta depois
@@ -102,24 +102,24 @@ void merge (int* array, int begin, int end) {
 
 	while (j <= middle && k <= end) {
 		if (compare_le(array[j], array[k])) {
-			assign(&temp_array[i], &array[j]);
+			assign(&temp_array[i], array[j]);
 			j++;
 		} else {
-			assign(&temp_array[i], &array[k]);
+			assign(&temp_array[i], array[k]);
 			k++;
 		}
 		i++;
 	}
 	while (j <= middle) {
-		assign(&temp_array[i], &array[j]);
+		assign(&temp_array[i], array[j]);
 		i++;
 		j++;
 	}
 	while (k <= end) {
-		assign(&temp_array[i], &array[k]);
+		assign(&temp_array[i], array[k]);
 		i++;
 		k++;
 	}
 	for (i = begin; i <= end; i++)
-		assign(&array[i], &temp_array[i]);
+		assign(&array[i], temp_array[i]);
 }

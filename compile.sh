@@ -1,1 +1,1 @@
-gcc main.c nlogn_complexity.c quadratic_complexity.c utils.c -o main
+gcc src/main.c src/sorts_nlogn.c src/sorts_quadratic.c src/sorts_alternative.c src/input.c src/output.c src/utils.c -o main
