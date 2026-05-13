@@ -41,7 +41,7 @@ void count_sort (int* array, const int n) {
 
 /*--------------- Bytewise Radix Sort ---------------*/
 
-int radix_bucket[256]; // Should it be bigger?
+int radix_bucket[256];
 
 // fazemos radix sort byte a byte já que isso permite que trabalhemos somente com log2 e operações bitwise
 // que são, na prática, O(1)
