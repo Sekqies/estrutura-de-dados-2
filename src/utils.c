@@ -130,3 +130,9 @@ bool is_sorted (int* array, int size) {
         }
     return true;
 }
+
+void sort_three(int* a, int* b, int *c){
+    if (compare_l(b,a)) swap(b, a);
+    if (compare_l(c,a)) swap(c, a);
+    if (compare_l(c,b)) swap(c, b);
+}

@@ -41,7 +41,13 @@ int partition (int* array, int begin, int end) {
     //     index = end;
     //     break;
     // }
-	assign(&pivot, array[begin]); // Make it not fixed? Above
+
+	int mid = begin + (end - begin) / 2;
+
+	sort_three(&array[begin],&array[mid],&array[end]);
+	swap(&array[mid], &array[begin]);
+
+	assign(&pivot, array[begin]); 
     // Define cursores
 	int left = begin+1;
 	int right = end;
@@ -53,7 +59,9 @@ int partition (int* array, int begin, int end) {
 			// ++count;
 			left++;
 		}
-		while (begin < right && compare_le(pivot, array[right])) {
+
+		// vamos usar compare_l ao invés de compare_le para balancear melhor a árvore.
+		while (begin < right && compare_l(pivot, array[right])) {
 			// ++count;
 			right--;
 		}
@@ -86,6 +94,7 @@ void merge_sort_iteration (int* array, int begin, int end, int depth) {
 		int middle = (begin+end)/2;
 		merge_sort_iteration(array, begin, middle, depth+1);
 		merge_sort_iteration(array, middle+1, end, depth+1);
+		if (array[middle] <= array[middle+1]) return;
 		merge(array, begin, end);
 	}
 }

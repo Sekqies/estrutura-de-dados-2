@@ -1,0 +1,160 @@
+#include "headers/sorts_alternative.h"
+#include "headers/sorts_nlogn.h"
+#include "headers/sorts_quadratic.h"
+#include "headers/utils.h"
+
+
+typedef struct {
+    int size;
+    int largest;
+    int smallest;
+    int direct_inversion_count;
+    float mean;
+    unsigned int highest_bit;
+} Metrics;
+
+void get_metrics(const int* ar, const int n, Metrics* met){
+    met->size = n;
+    
+    int smallest, largest;
+    smallest = largest = ar[n-1];
+    int rep_count, inv_count;
+    unsigned int bit_accumulator = 0;
+    rep_count = inv_count = 0;
+
+    float mean = ar[n-1];
+
+    for(unsigned int i = 0; i < n-1; ++i){
+        smallest = min(smallest,ar[i]);
+        largest = max(largest,ar[i]);
+        inv_count += ar[i] > ar[i+1];   
+        bit_accumulator |= ar[i];   
+        mean += ar[i];
+    }
+    mean /= n;
+    
+    met->direct_inversion_count = inv_count;
+    met->smallest = smallest;
+    met->largest = largest;
+    met->highest_bit = bit_accumulator;
+    met->size = n;
+    met->mean = mean;
+}
+
+
+// IMPORTANTE, A SER VERIFICADO CASO A HEURÍSTICA FALHE: O peso de uma operação aritmética é diferente do de um assign. 
+
+// Contagem de operações no radix:
+// 2n assigns (inverter/desinverter o primeiro bit)
+/* k iterações do loop que fazem:
+    2n iterações de get_nth_byte
+    256 somas
+    2n cópias 
+*/
+// no total, 2n + k (2n + 2n + 256) = 2n(1 + 2k) + 256k
+
+int radix_score(const Metrics* met){
+    unsigned int k = fast_log2(met->highest_bit) >> 3;
+    int n = met->size;
+    return 2*n*(1 + 2*k) + 256 * k;
+}
+
+// Operações do count sort:
+// 2n max/min, que fazem uma comparação e um assign, 4n
+// alocação de k memória.
+// n subtrações e módulos. Módulo tem uma negação e uma comparação. 3n 
+// Por fim, kn operações.
+// No total, 7n + k + kn, ou k(n + 1) + 7n
+
+int count_score(const Metrics* met){
+    int k = met->largest - met->smallest;
+    int n = met->size;
+    return k * (n + 1) + 7 * n;
+}
+
+// Operações do merge sort:
+// Alocação inicial de n elementos
+// Profundidade da árvore: log(n), com, em um k-ésimo andar, 2^k elementos
+// Calcularemos por andar, e depois somamos tudo.
+// temos begin - end = k (tamanho do array local). fazemos, então
+// k * (1 comparação + 1 assign) + k/2 * 1 assign + k/2 * 1 assign + k assigns
+// no total, temos 2k + k/2 + k/2 = 3k por andar
+// nosso uso final será f(n) = 3 * somatória(i=0,log(n),2^i) = 3n*log(n)
+// vale notar que se uma das metades já estiver ordenada, o merge sort consegue pular um passo.
+// a gente estima a probabilidade disso ocorrer ao comperar o número de inversões estimado com o número de inversões que de fato temos.
+// se ele for exatamente igual, a complexidade não muda. se for menor, tem menos caos, e ele conseguirá pular alguns
+// mas, se for maior, nada muda, a complexidade ainda será no pior caso 3nlog(n). 
+// então, temos no final n + 3nlog(n) * fator de disordem
+
+int merge_score(const Metrics* met){    
+    int n = met -> size;
+
+    float expected_noise = (n - 1) / 2.0f;
+    float disorder = met->direct_inversion_count / expected_noise;
+    disorder = min(1.0f,disorder);
+
+    return (int) n + 3 * n * fast_log2(n) * disorder;
+}
+
+
+// Operações do quick sort:
+// Vamos fazer inicialmente uma análise assumindo um array perfeitamente aleatório, e depois aplicar os parâmetros que temos.
+// Profundidade da árvore de log(n) 
+// No k-ésimo andar, com k = right-left, a gente terá um loop que:
+/*
+    enquanto left < right, ou seja, k/5 vezes:
+    - fazer 2 comparações
+    - fazer 1 soma
+    - fazer uma troca quando left for menor que right. isso ocorre com uma probabilidade de n/5 com uma distribuição de median of three. ou seja, 1/5 de um swap, ou 3 / 5 assigns. e 1/5 de comparação
+    - Um último check  k/5
+
+*/
+// no total então, temos k(3 + 3/5 + 2/5 + 4/5) = 24k/5 operações, que ocorrerão log(n) vezes.
+// ou seja, em um caso aleatório, podemos esperar 24n/5 log(n) operações.
+// Vale ressaltar que seria muito menos complexo analisar esse algoritmo se ele tivesse um pivô simples (como ar[0])
+// Em um caso não aleatório, temos alguns fatores que mudam.
+// A gente passa agora a considerar uma desordem de inversões, como no merge sort
+// E estimamos o número de duplicatas (que são ruins para o quick sort). A gente consegue estimar isso ao ver a nossa range max - min. Por exemplo, se a range < n, sempre teremos no mínimo uma duplicata.
+// Temos então um número de repetições estimados de n - range, ou, 1 - range/n como taxa
+
+
+int quick_sort_score(const Metrics* met){ 
+    int n = met->size;
+
+    float expected_inversions = (n-1)/2.0f;
+    float inversion_disorder = met->direct_inversion_count / expected_inversions;
+    inversion_disorder = min(1.0f,inversion_disorder);
+
+    float swap_by_disorder = n / 5.0f * inversion_disorder;
+
+    int range = met->largest - met->smallest;
+    float swap_by_duplicate = n / 2.0f * (1.0f - range);
+
+    float effective_swaps = swap_by_disorder > swap_by_duplicate ? swap_by_disorder : swap_by_duplicate;
+    // a constante 7.4f é por 4 comparações, 3 assigns, e 2/5 comparações
+    return (int) fast_log2(n) * (3.0f * n + effective_swaps * 7.4f); 
+}
+
+// Bubble sort nunca é considerado pois ele é estritamente pior do que os outros métodos, em quase todos os casos.
+
+
+void sort(int* ar, const int n){
+    if (n == 3){
+        sort_three(&ar[0],&ar[1],&ar[2]);
+        return;
+    }
+    Metrics met;
+    get_metrics(ar,n,&met);
+
+    if(met.direct_inversion_count==0){
+        return;
+    }
+    if(met.direct_inversion_count == n-1){
+        for(int i = n - 1; i >= n/2; --i){
+            swap(&ar[i],&ar[n-i]);
+        }
+       return; 
+    }
+
+
+}

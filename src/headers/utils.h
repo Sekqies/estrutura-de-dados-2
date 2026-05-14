@@ -36,3 +36,4 @@ unsigned char get_nth_byte (unsigned int v, unsigned char n); // Retorna o n-és
 int* copy_array (int* array, int size);      // Copia um array
 void print_array (int* array, int size);     // Printa um array
 bool is_sorted (int* array, int size);       // Verifica a correta ordenação de um array
+void sort_three(int* a, int* b, int *c);
