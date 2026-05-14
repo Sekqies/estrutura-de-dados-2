@@ -54,21 +54,15 @@ int partition (int* array, int begin, int end) {
     // Move cursores até achar um elemento errado em cada extremidade
     // Uma vez acha, os troca e procura os pŕoximos até que esteja separado em:
     // Menores que pivô | pivô | maiores que pivô
-	do {
-		while (left < end && compare_l(array[left], pivot)) {
-			// ++count;
-			left++;
-		}
-
-		// vamos usar compare_l ao invés de compare_le para balancear melhor a árvore.
-		while (begin < right && compare_l(pivot, array[right])) {
-			// ++count;
-			right--;
-		}
-		if (left < right) {
+	while (left <= right) {
+        while (left <= end && compare_l(array[left], pivot)) left++;
+        while (right > begin && compare_l(pivot, array[right])) right--;
+        if (left <= right) {
             swap(&array[left], &array[right]);
-		}
-	} while (left < right);
+            left++;
+            right--;
+        }
+    }
     // Reordena últimos valores e retorna posição do pivô
 	assign(&array[begin], array[right]);
 	assign(&array[right], pivot);

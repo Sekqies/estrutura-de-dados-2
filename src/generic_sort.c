@@ -89,18 +89,30 @@ long long count_score(const Metrics* met){
 // nosso uso final será f(n) = 3 * somatória(i=0,log(n),2^i) = 3n*log(n)
 // vale notar que se uma das metades já estiver ordenada, o merge sort consegue pular um passo.
 // a gente estima a probabilidade disso ocorrer ao comperar o número de inversões estimado com o número de inversões que de fato temos.
-// se ele for exatamente igual, a complexidade não muda. se for menor, tem menos caos, e ele conseguirá pular alguns
-// mas, se for maior, nada muda, a complexidade ainda será no pior caso 3nlog(n). 
-// então, temos no final n + 3nlog(n) * fator de disordem
+// fazemos isso por andar. a chance é baixa, mas se conseguimos cortar em um andar, a gente elimina o trabalho de todos os filhos
+// em um dado nível k, teremos uma probabilidade de (1-p)^2^(k-1) disso ocorrer, onde p = a probabilidade de dois números estarem inversos
+// então, o trabalho nesse andar k será a probabilidade de ser NÃO ser cortado multiplicado por 3k
+// infelizmente, isso tira a nossa recorrência. Teremos então que essa função de telemetria é O(log(n))
 
 long long merge_score(const Metrics* met){    
     int n = met -> size;
+    
+    float p = (float) met->direct_inversion_count / max(n-1.0f,1.0f);
 
-    float expected_noise = (n - 1) / 2.0f;
-    float disorder = met->direct_inversion_count / expected_noise;
-    disorder = min(1.0f,disorder);
+    if (p >= 0.5) {
+        return (long long)n + (long long)(3.0f * n * fast_log2(n));
+    }
 
-    return (long long) n + 3 * n * fast_log2(n) * disorder;
+    float work = 0.0f;
+    double probability_of_cut = 1.0f-p;
+    int levels = fast_log2(n);
+
+    for(int k = 1; k <= levels; ++k){
+        float execution_probability = 1.0f - probability_of_cut;
+        work += 3.0f * n * execution_probability;
+        probability_of_cut *= probability_of_cut;
+    }
+    return (long long)(n + work);
 }
 
 
