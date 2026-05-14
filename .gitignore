@@ -1,1 +1,4 @@
 *.pdf
+bkp*
+src/bkp*
+src/headers/bkp*
