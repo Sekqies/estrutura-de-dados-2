@@ -187,7 +187,7 @@ void sort(int* ar, const int n){
 
     switch (best_method) {
         case SORT_RADIX:
-            bytewise_radix_sort(ar, n,fast_log2(met.highest_bit) >> 3); 
+            bytewise_radix_sort(ar, n, 5 - fast_log2(met.highest_bit) / 8 ); 
             break;
         case SORT_COUNT:
             count_sort(ar, n); 
