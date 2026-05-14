@@ -61,7 +61,7 @@ void get_metrics(const int* ar, const int n, Metrics* met){
 // no total, 2n + k (2n + 2n + 256) = 2n(1 + 2k) + 256k
 
 long long radix_score(const Metrics* met){
-    unsigned int k = fast_log2(met->highest_bit) >> 3 + 1;
+    unsigned int k = fast_log2(met->highest_bit) / 8 + 1;
     int n = met->size;
     return 2*n*(1 + 2*k) + 256 * k;
 }
