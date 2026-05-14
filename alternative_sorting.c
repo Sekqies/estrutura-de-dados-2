@@ -82,7 +82,8 @@ void bytewise_radix_sort(int* ar, const int n){
     // radix sort tem o problema que ele não sabe discernir números negativos de positivos.
     // se tratarmos o bit de sinal como um bit de valor (ex: -3 = (1) 11 = 111 = 5), teremos problema de ordenação, já que todo
     // número negativo terá o primeiro bit setado, fazendo que ele seja maior que os positivos.
-    // para isso, invertemos o primeiro bit de cada número. dessa forma, um número positivo sempre será maior que um número negativo, e a comparação de magnitude ocorre normalmente.   
+    // para isso, invertemos o primeiro bit de cada número. dessa forma, 
+    // um número positivo sempre será maior que um número negativo, e a comparação de magnitude ocorre normalmente.   
     for(int i = 0; i < n; ++i){
         ar[i] ^= 0x80000000;
     }
