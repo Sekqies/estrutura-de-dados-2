@@ -60,8 +60,8 @@ void get_metrics(const int* ar, const int n, Metrics* met){
 */
 // no total, 2n + k (2n + 2n + 256) = 2n(1 + 2k) + 256k
 
-int radix_score(const Metrics* met){
-    unsigned int k = fast_log2(met->highest_bit) >> 3;
+long long radix_score(const Metrics* met){
+    unsigned int k = fast_log2(met->highest_bit) >> 3 + 1;
     int n = met->size;
     return 2*n*(1 + 2*k) + 256 * k;
 }
@@ -70,13 +70,13 @@ int radix_score(const Metrics* met){
 // 2n max/min, que fazem uma comparação e um assign, 4n
 // alocação de k memória.
 // n subtrações e módulos. Módulo tem uma negação e uma comparação. 3n 
-// Por fim, kn operações.
-// No total, 7n + k + kn, ou k(n + 1) + 7n
+// Por fim, k operações.
+// No total, 7n + 2k
 
-int count_score(const Metrics* met){
+long long count_score(const Metrics* met){
     int k = met->largest - met->smallest;
     int n = met->size;
-    return k * (n + 1) + 7 * n;
+    return 7 * n + 2 * k;
 }
 
 // Operações do merge sort:
@@ -93,14 +93,14 @@ int count_score(const Metrics* met){
 // mas, se for maior, nada muda, a complexidade ainda será no pior caso 3nlog(n). 
 // então, temos no final n + 3nlog(n) * fator de disordem
 
-int merge_score(const Metrics* met){    
+long long merge_score(const Metrics* met){    
     int n = met -> size;
 
     float expected_noise = (n - 1) / 2.0f;
     float disorder = met->direct_inversion_count / expected_noise;
     disorder = min(1.0f,disorder);
 
-    return (int) n + 3 * n * fast_log2(n) * disorder;
+    return (long long) n + 3 * n * fast_log2(n) * disorder;
 }
 
 
@@ -125,7 +125,7 @@ int merge_score(const Metrics* met){
 // Temos então um número de repetições estimados de n - range, ou, 1 - range/n como taxa
 
 
-int quick_sort_score(const Metrics* met){ 
+long long quick_sort_score(const Metrics* met){ 
     int n = met->size;
 
     float expected_inversions = (n-1)/2.0f;
@@ -135,11 +135,11 @@ int quick_sort_score(const Metrics* met){
     float swap_by_disorder = n / 5.0f * inversion_disorder;
 
     int range = met->largest - met->smallest;
-    float swap_by_duplicate = n / 2.0f * (1.0f - range/n);
+    float swap_by_duplicate = n / 2.0f * max(1.0f - (float) range/n,0.0f);
 
     float effective_swaps = swap_by_disorder > swap_by_duplicate ? swap_by_disorder : swap_by_duplicate;
     // a constante 7.4f é por 4 comparações, 3 assigns, e 2/5 comparações
-    return (int) fast_log2(n) * (3.0f * n + effective_swaps * 7.4f); 
+    return (long long) fast_log2(n) * (3.0f * n + effective_swaps * 7.4f); 
 }
 
 // Bubble sort nunca é considerado pois ele é estritamente pior do que os outros métodos, em quase todos os casos.
