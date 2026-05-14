@@ -42,15 +42,6 @@ void count_sort (int* array, const int n) {
 /*--------------- Bytewise Radix Sort ---------------*/
 
 
-// isso é um hack para aceitar argumentos padrões no C. Por padrão, skippable_bytes é 0.
-
-#define bytewise_radix_sort(array, n, ...) \
-    bytewise_radix_sort_impl(array, n, ##__VA_ARGS__, 0)
-
-#define bytewise_radix_sort_impl(array, n, skippable, ...) \
-    bytewise_radix_sort_fn(array, n, skippable)
-
-
 int radix_bucket[256];
 
 // fazemos radix sort byte a byte já que isso permite que trabalhemos somente com log2 e operações bitwise
@@ -59,7 +50,7 @@ int radix_bucket[256];
 // execução: O(n)
 // memória auxiliar: O(n)
 
-void internal_bytewise_radix_sort (int* array, const int n, unsigned char skippable_bytes) {
+void internal_bytewise_radix_sort (int* array, const int n, const unsigned char skippable_bytes) {
     int* tmp = calloc(n, sizeof(int));
 
     // radix sort tem o problema que ele não sabe discernir números negativos de positivos.

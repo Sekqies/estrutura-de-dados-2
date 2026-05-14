@@ -13,13 +13,20 @@ typedef struct {
     unsigned int highest_bit;
 } Metrics;
 
+typedef enum {
+    SORT_RADIX,
+    SORT_COUNT,
+    SORT_MERGE,
+    SORT_QUICK
+} SortMethod;
+
 void get_metrics(const int* ar, const int n, Metrics* met){
     met->size = n;
     
     int smallest, largest;
     smallest = largest = ar[n-1];
     int rep_count, inv_count;
-    unsigned int bit_accumulator = 0;
+    unsigned int bit_accumulator = ar[n-1];
     rep_count = inv_count = 0;
 
     float mean = ar[n-1];
@@ -128,7 +135,7 @@ int quick_sort_score(const Metrics* met){
     float swap_by_disorder = n / 5.0f * inversion_disorder;
 
     int range = met->largest - met->smallest;
-    float swap_by_duplicate = n / 2.0f * (1.0f - range);
+    float swap_by_duplicate = n / 2.0f * (1.0f - range/n);
 
     float effective_swaps = swap_by_disorder > swap_by_duplicate ? swap_by_disorder : swap_by_duplicate;
     // a constante 7.4f é por 4 comparações, 3 assigns, e 2/5 comparações
@@ -143,6 +150,12 @@ void sort(int* ar, const int n){
         sort_three(&ar[0],&ar[1],&ar[2]);
         return;
     }
+
+    if (n < 15){
+        insertion_sort(ar,n);
+        return;
+    }
+
     Metrics met;
     get_metrics(ar,n,&met);
 
@@ -151,10 +164,39 @@ void sort(int* ar, const int n){
     }
     if(met.direct_inversion_count == n-1){
         for(int i = n - 1; i >= n/2; --i){
-            swap(&ar[i],&ar[n-i]);
+            swap(&ar[i],&ar[n-i-1]);
         }
        return; 
     }
 
+    long long scores[4]; 
+    scores[SORT_RADIX] = radix_score(&met);
+    scores[SORT_COUNT] = count_score(&met);
+    scores[SORT_MERGE] = merge_score(&met);
+    scores[SORT_QUICK] = quick_sort_score(&met);
 
+    SortMethod best_method = SORT_RADIX;
+    long long min_score = scores[SORT_RADIX];
+
+    for (int i = 1; i < 4; ++i) {
+        if (scores[i] < min_score) {
+            min_score = scores[i];
+            best_method = (SortMethod)i;
+        }
+    }
+
+    switch (best_method) {
+        case SORT_RADIX:
+            bytewise_radix_sort(ar, n,fast_log2(met.highest_bit) >> 3); 
+            break;
+        case SORT_COUNT:
+            count_sort(ar, n); 
+            break;
+        case SORT_MERGE:
+            merge_sort(ar, n); 
+            break;
+        case SORT_QUICK:
+            quick_sort(ar, n); 
+            break;
+    }
 }

@@ -23,9 +23,11 @@ int compare_g (int a, int b);                // Compara (>) um elemento ao outro
 int compare_ge (int a, int b);               // Compara (>=) um elemento ao outro e conta a operação
 
 /*--------------- Simple facilitators ---------------*/
-int min (int a, int b);                      // Retorna o mínimo dos dois elementos
-int max (int a, int b);                      // Retorna o máximo dos dois elementos
 int abs (int a);                             // Retorna o módulo do elemento
+#undef min
+#undef max
+#define min(a,b) (compare_l((a),(b))? (a) : (b))
+#define max(a,b) (compare_g((a), (b)) ? (a) : (b))
 
 /*--------------- Bit-wise facilitators ---------------*/
 int fast_log2 (unsigned int v);              // Pega o log2 de um número

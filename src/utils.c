@@ -65,14 +65,11 @@ int compare_ge (int a, int b) {
 
 /*--------------- Simple facilitators ---------------*/
 // Retorna o mínimo dos dois elementos
-int min (int a, int b){
-    return compare_l(a, b) ? a : b;
-}
 
-// Retorna o máximo dos dois elementos
-int max (int a, int b) {
-    return compare_g(a, b) ? a : b;
-}
+#undef min
+#undef max
+#define min(a,b) (compare_l((a),(b))? (a) : (b))
+#define max(a,b) (compare_g((a), (b)) ? (a) : (b))
 
 // Retorna o módulo do elemento
 int abs (int a) {
