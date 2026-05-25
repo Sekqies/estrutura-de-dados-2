@@ -49,7 +49,11 @@ void get_metrics(const int* ar, const int n, Metrics* met){
 }
 
 
-// IMPORTANTE, A SER VERIFICADO CASO A HEURÍSTICA FALHE: O peso de uma operação aritmética é diferente do de um assign. 
+typedef enum {
+    WEIGHT_ARITHMETIC = 1,
+    WEIGHT_ASSIGN = 1,      
+    WEIGHT_ALLOCATION = 1  
+} Weight;
 
 // Contagem de operações no radix:
 // 2n assigns (inverter/desinverter o primeiro bit)
@@ -63,7 +67,12 @@ void get_metrics(const int* ar, const int n, Metrics* met){
 long long radix_score(const Metrics* met){
     unsigned int k = fast_log2(met->highest_bit) / 8 + 1;
     int n = met->size;
-    return 2*n*(1 + 2*k) + 256 * k;
+    
+    float n_arithmetic = k * (2.0f * n + 256.0f);
+    float n_assign = 2.0f * n + k * 2.0f * n; 
+    float n_allocations = n; 
+    
+    return (long long)(n_arithmetic * WEIGHT_ARITHMETIC + n_assign * WEIGHT_ASSIGN + n_allocations * WEIGHT_ALLOCATION);
 }
 
 // Operações do count sort:
@@ -76,7 +85,12 @@ long long radix_score(const Metrics* met){
 long long count_score(const Metrics* met){
     int k = met->largest - met->smallest;
     int n = met->size;
-    return 7 * n + 2 * k;
+    
+    float n_arithmetic = 5.0f * n; 
+    float n_assign = 2.0f * n + k;
+    float n_allocations = k; 
+    
+    return (long long)(n_arithmetic * WEIGHT_ARITHMETIC + n_assign * WEIGHT_ASSIGN + n_allocations * WEIGHT_ALLOCATION);
 }
 
 // Operações do merge sort:
@@ -100,19 +114,29 @@ long long merge_score(const Metrics* met){
     float p = (float) met->direct_inversion_count / max(n-1.0f,1.0f);
 
     if (p >= 0.5) {
-        return (long long)n + (long long)(3.0f * n * fast_log2(n));
+        float n_arithmetic = n + n * fast_log2(n);
+        float n_assign = 2.0f * n * fast_log2(n);
+        float n_allocations = n;
+        return (long long)(n_arithmetic * WEIGHT_ARITHMETIC + n_assign * WEIGHT_ASSIGN + n_allocations * WEIGHT_ALLOCATION);
     }
 
-    float work = 0.0f;
+    float work_arithmetic = 0.0f;
+    float work_assigns = 0.0f;
     double probability_of_cut = 1.0f-p;
     int levels = fast_log2(n);
 
     for(int k = 1; k <= levels; ++k){
         float execution_probability = 1.0f - probability_of_cut;
-        work += 3.0f * n * execution_probability;
+        work_arithmetic += n * execution_probability;
+        work_assigns += 2.0f * n * execution_probability;
         probability_of_cut *= probability_of_cut;
     }
-    return (long long)(n + work);
+    
+    float n_arithmetic = n + work_arithmetic;
+    float n_assign = work_assigns;
+    float n_allocations = n;
+    
+    return (long long)(n_arithmetic * WEIGHT_ARITHMETIC + n_assign * WEIGHT_ASSIGN + n_allocations * WEIGHT_ALLOCATION);
 }
 
 
@@ -136,7 +160,6 @@ long long merge_score(const Metrics* met){
 // E estimamos o número de duplicatas (que são ruins para o quick sort). A gente consegue estimar isso ao ver a nossa range max - min. Por exemplo, se a range < n, sempre teremos no mínimo uma duplicata.
 // Temos então um número de repetições estimados de n - range, ou, 1 - range/n como taxa
 
-
 long long quick_sort_score(const Metrics* met){ 
     int n = met->size;
 
@@ -150,8 +173,12 @@ long long quick_sort_score(const Metrics* met){
     float swap_by_duplicate = n / 2.0f * max(1.0f - (float) range/n,0.0f);
 
     float effective_swaps = swap_by_disorder > swap_by_duplicate ? swap_by_disorder : swap_by_duplicate;
-    // a constante 7.4f é por 4 comparações, 3 assigns, e 2/5 comparações
-    return (long long) fast_log2(n) * (3.0f * n + effective_swaps * 7.4f); 
+    
+    float n_arithmetic = fast_log2(n) * (3.0f * n + effective_swaps * 4.4f);
+    float n_assign = fast_log2(n) * (effective_swaps * 3.0f);
+    float n_allocations = 0;
+    
+    return (long long)(n_arithmetic * WEIGHT_ARITHMETIC + n_assign * WEIGHT_ASSIGN + n_allocations * WEIGHT_ALLOCATION); 
 }
 
 // Bubble sort nunca é considerado pois ele é estritamente pior do que os outros métodos, em quase todos os casos.
@@ -199,7 +226,7 @@ void sort(int* ar, const int n){
 
     switch (best_method) {
         case SORT_RADIX:
-            bytewise_radix_sort(ar, n, 5 - fast_log2(met.highest_bit) / 8 ); 
+            interal_bytewise_radix_sort(ar, n, 5 - fast_log2(met.highest_bit) / 8 ); 
             break;
         case SORT_COUNT:
             count_sort(ar, n); 
