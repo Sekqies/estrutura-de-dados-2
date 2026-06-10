@@ -47,12 +47,16 @@ void get_metrics(const int* ar, const int n, Metrics* met){
     met->mean = mean;
 }
 
-
+// Quando esse enum foi criado, assumiu-se que um assign/aritmética/alocação cada um teria, mais ou menos, uma proporção de demora (tipo um assign ter duas operações aritméticas de tempo)
+// Na hora de fazer a telemtria, percebeu-se que isso muda muito de caso a caso, e não tem como saber isso de forma confiável.
 typedef enum {
     WEIGHT_ARITHMETIC = 1,
     WEIGHT_ASSIGN = 1,      
     WEIGHT_ALLOCATION = 1  
 } Weight;
+
+// Os comentários nesse arquivo são o raciocínio para chegar na fórmula que dá o score de cada uma das funções (não servem como documentação)
+
 
 // Contagem de operações no radix:
 // 2n assigns (inverter/desinverter o primeiro bit)
@@ -181,6 +185,11 @@ long long quick_sort_score(const Metrics* met){
 }
 
 // Bubble sort nunca é considerado pois ele é estritamente pior do que os outros métodos, em quase todos os casos.
+
+// No caso do insertion sort, ele não é considerado pois precisa saber do número inversões no array (a complexidade é, na prática, O(n * numero_de_inversoes))
+// Mas o algoritmo para contar inversões é essencialmente um merge sort O(n log n). Ou seja, faria mais sentido ordenar a lista
+// Podemos pegar uma amostra constante (100 elementos, 1000 elementos, etc) mas isso introduz um erro na função ao passo que ele cresce.
+// E não podemos esquecer que insertion sort é O(n^2).
 
 
 void sort(int* ar, const int n){

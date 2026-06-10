@@ -2,6 +2,9 @@
 
 /*--------------- Count Sort ---------------*/
 
+// o count sort também pode ser feito com floats, partindo-se do mesmo princípio de interpretar os bytes de um float como um inteiro.
+// ele é, no entanto, extremamente ineficiente nesse caso, já que os bytes de um float, embora ordenados, saltam muito mais do que de um inteiro.
+
 // execução: O(n + k), onde k = (max(array) - min(array))
 // memória auxiliar: O(k)
 void count_sort (int* array, const int n) {
@@ -49,6 +52,8 @@ void bytewise_radix_sort(int* array, const int n){
     internal_bytewise_radix_sort(array,n,0);
 }
 
+// curiosidade: esse radix sort funciona com floats também. isso é porque os bytes do float são bem ordenados, ou seja, se ordenarmos os bytes, ordenamos os números também. isso acontece sem mudança de performance.
+
 // fazemos radix sort byte a byte já que isso permite que trabalhemos somente com log2 e operações bitwise
 // que são, na prática, O(1)
 
@@ -81,6 +86,8 @@ void internal_bytewise_radix_sort (int* array, const int n, const unsigned char 
         }
         memcpy(array, tmp, n * sizeof(int));
     }
+
+    // isso desfaz a inversão que fizemos no começo
     for (int i = 0; i < n; ++i) {
         array[i] ^= 0x80000000;
     }
