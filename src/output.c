@@ -48,10 +48,10 @@ void benchmark (int* array, int size) {
     // data[x][1] : atribuições do sort x
     // data[x][2] : altura da árvore de recursão do sort x
     // data[x][3] : número de nós na árvore de recursão do sort x
-    long long int** data = (long long int**) calloc(7, sizeof(long long int*));
-    double* times = (double*) calloc(7, sizeof(double));
+    long long int** data = calloc(7, sizeof(*data));
+    double* times = calloc(7, sizeof(*times));
     for (int i = 0; i < 7; i++)
-        data[i] = (long long int*) calloc(4, sizeof(long long int));
+        data[i] = calloc(4, sizeof(*data[i]));
 
     // Collect data
     double dt;
@@ -83,7 +83,7 @@ void benchmark (int* array, int size) {
             break;
         }
         // Store data
-        dt = test_sort(sort, array, size);
+        dt = test_sort(sort, array_copy, size);
         times[i] = dt; // Just so it works; it's lazy, I know
         data[i][0] = ctr_compare;
         data[i][1] = ctr_assign;
