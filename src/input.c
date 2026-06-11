@@ -65,7 +65,7 @@ void deal_with_flags (int argc, char** argv, char** input, SortMethod* mode, int
             printf("Try '%s --help' for more information.\n", argv[0]);
         // Help message
         if (help) {
-            printf( "Quando sem <file>, ou quando <file> é -, lê da entrada padrão."
+            printf( "Quando sem <file>, ou quando <file> é -, lê da entrada padrão.\n"
                     "Entrada:\n"
                     "    -i, --input <file>           Path <file> do arquivo de entrada\n" 
                     "    -t, --tamanho <tamanho>      Tamanho do array a ser ordenado\n"
