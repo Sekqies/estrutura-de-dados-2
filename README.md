@@ -17,12 +17,12 @@ cd estrutura-de-dados-2
 ```
 
 ### Compilação
-Para compilar o projeto, executa-se um script [`compile.sh`](compile.sh).
+Para compilar o projeto, executa-se um pequeno script com as instruções de compilação.
 * Windows
 ```bash
 bash compile.sh
 ```
-Ou o script alternativo [`compile.bat`](compile.bat).
+Ou, alternamente, o script alternativo [`compile.bat`](compile.bat).
 ```bat
 ./compile.bat
 ```
