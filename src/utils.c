@@ -11,7 +11,7 @@ void get_sort_function (SortMethod choice, Sort* sort, char* sort_name) {
         strcpy(sort_name, "RADIX SORT");
     } else if (choice == SORT_COUNT) {
         *sort = count_sort;
-        strcpy(sort_name, "COUNT SORT");
+        strcpy(sort_name, "COUNTING SORT");
     } else if (choice == SORT_MERGE) {
         *sort = merge_sort;
         strcpy(sort_name, "MERGE SORT");

@@ -49,6 +49,10 @@ void deal_with_flags (int argc, char** argv, char** input, SortMethod* mode, int
                 *mode = SORT_SELECTION;
             else if (strstr(argv[i], "insertion"))
                 *mode = SORT_INSERTION;
+            else if (strstr(argv[i], "counting"))
+                *mode = SORT_COUNT;
+            else if (strstr(argv[i], "radix-bytewise"))
+                *mode = SORT_RADIX;
             else
                 error = true;
         } else if (strcmp(argv[i], "--benchmark") == 0 || strcmp(argv[i], "-b") == 0) {
@@ -71,10 +75,12 @@ void deal_with_flags (int argc, char** argv, char** input, SortMethod* mode, int
                     "    -t, --tamanho <tamanho>      Tamanho do array a ser ordenado\n"
                     "Operação:\n"
                     "    -a, --algoritmo <alg>        Fixa um algoritmo de ordenação <alg> dentre as opções:\n"
-                    "        quick\n"
-                    "        merge\n"
                     "        bubble\n"
+                    "        counting\n"
                     "        insertion\n"
+                    "        merge\n"
+                    "        quick\n"
+                    "        radix-bytewise\n"
                     "        selection\n"
                     "    -b, --benchmark              Usa todos os algoritmos de ordenação e compara suas métricas\n"
                     "    -A, --adaptativo             Usa heurísticas para determinar o melhor algoritmo; é a opção padrão\n"

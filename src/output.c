@@ -16,7 +16,7 @@ double test_sort(Sort sort, int* array, int size) {
 }
 
 void print_table (long long int** data, double* times) {
-    printf( "                    |    Quick    |    Merge    |    Bubble   |  Selection  |  Insertion  |    Count    | Bytewise Radix\n"
+    printf( "                    |    Quick    |    Merge    |    Bubble   |  Selection  |  Insertion  |  Counting   | Bytewise Radix\n"
             "Time Taken          | %10lfs | %10lfs | %10lfs | %10lfs | %10lfs | %10lfs | %10lfs \n"
             "Comparisons         | %11lld | %11lld | %11lld | %11lld | %11lld | %11lld | %11lld \n"
             "Assignments         | %11lld | %11lld | %11lld | %11lld | %11lld | %11lld | %11lld \n"
@@ -39,7 +39,7 @@ void benchmark (int* array, int size) {
             "\tBubble Sort\n"
             "\tSelection Sort\n"
             "\tInsertion Sort\n"
-            "\tCount Sort\n"
+            "\tCounting Sort\n"
             "\tBytewise Radix Sort\n"
             "Results:\n"
             );
