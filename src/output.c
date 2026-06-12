@@ -80,7 +80,7 @@ void benchmark (int* array, int size) {
         }
         // Store data
         dt = test_sort(sort, array, size);
-        times[i] = dt; // Just so it works; it's lazy, I know
+        times[i] = dt;
         data[i][0] = ctr_compare;
         data[i][1] = ctr_assign;
         data[i][2] = ctr_recursion_depth;
