@@ -79,6 +79,7 @@ void merge_sort (int* array, int n) {
     int* temp_array = malloc(n * sizeof(int));
     ctr_mem_alloc += n;
 	merge_sort_iteration(array, 0, n-1, 0, temp_array);
+	free(temp_array);
 }
 
 // Divide recursivamente sobre suas metades e as junta depois
