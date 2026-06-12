@@ -17,6 +17,9 @@ typedef struct {
 #ifndef SORT_WEIGHT
 #define SORT_WEIGHT
 
+// Quando esse enum foi criado, assumiu-se que um assign/aritmética/alocação cada um teria, mais ou menos, uma proporção de demora (tipo um assign ter duas operações aritméticas de tempo)
+// Na hora de fazer a telemtria, percebeu-se que isso muda muito de caso a caso, e não tem como saber isso de forma confiável.
+
 typedef enum {
     WEIGHT_ARITHMETIC = 1,
     WEIGHT_ASSIGN = 1,      
